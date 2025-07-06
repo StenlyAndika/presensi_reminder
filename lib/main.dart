@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'notif_service.dart';
-import 'notification_schedule.dart';
-import 'schedule_screen.dart';
+import 'services/notification_service.dart';
+import 'models/notification_schedule.dart';
+import 'screens/schedule_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,7 @@ void main() async {
 
   await Hive.openBox<NotificationSchedule>('schedules');
 
-  await NotifService().init();
+  await NotificationService().init();
 
   runApp(const MainApp());
 }
@@ -24,6 +25,13 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: const Locale('id'),
+      supportedLocales: const [Locale('id')],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: ScheduleScreen(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

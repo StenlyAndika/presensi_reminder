@@ -1,13 +1,15 @@
 name: reminder
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0
 
 environment:
   sdk: ^3.8.1
 
 dependencies:
   flutter:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
   flutter_local_notifications: ^19.3.0
   flutter_timezone: ^4.1.1
@@ -25,11 +27,12 @@ dev_dependencies:
   #dart run change_app_package_name:main com.package.name
   change_app_package_name: ^1.3.0
 
-  #dart run rename_app:main android="My App Name"
+  #dart run rename_app:main android="App Name"
   rename_app: ^1.3.2
 
   # dart run icons_launcher:create
   icons_launcher: ^3.0.1
+
   # dart run flutter_native_splash:create
   flutter_native_splash: ^2.4.6
 

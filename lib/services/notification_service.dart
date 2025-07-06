@@ -4,9 +4,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
-import 'notification_schedule.dart';
+import '../models/notification_schedule.dart';
 
-class NotifService {
+class NotificationService {
   final _notifications = FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
 

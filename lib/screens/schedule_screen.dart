@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'notification_schedule.dart';
-import 'notif_service.dart';
+import '../models/notification_schedule.dart';
+import '../services/notification_service.dart';
 
 class ScheduleScreen extends StatelessWidget {
   ScheduleScreen({super.key});
@@ -87,7 +87,7 @@ class ScheduleScreen extends StatelessWidget {
         await box.putAt(index, updated);
       }
 
-      NotifService().scheduleWeekly(updated);
+      NotificationService().scheduleWeekly(updated);
     }
   }
 
@@ -104,7 +104,7 @@ class ScheduleScreen extends StatelessWidget {
           body: dayData['message'],
         );
         box.add(defaultSchedule);
-        NotifService().scheduleWeekly(defaultSchedule);
+        NotificationService().scheduleWeekly(defaultSchedule);
         return defaultSchedule;
       },
     );
@@ -133,9 +133,9 @@ class ScheduleScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'Atur waktu notifikasi absen harian',
-                  style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 20),
                 Expanded(
@@ -194,7 +194,7 @@ class ScheduleScreen extends StatelessWidget {
                             height: 40,
                             decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(10)),
                             child: IconButton(
-                              icon: const Icon(Icons.edit_outlined, size: 20, color: Colors.grey),
+                              icon: Icon(Icons.edit_outlined, size: 20, color: Colors.grey.shade600),
                               onPressed: () => _pickTime(context, schedule),
                             ),
                           ),
