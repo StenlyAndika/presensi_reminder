@@ -44,6 +44,14 @@ class ScheduleScreen extends StatelessWidget {
     },
   ];
 
+  final Map<String, String> _dayTranslation = {
+    'Monday': 'Senin',
+    'Tuesday': 'Selasa',
+    'Wednesday': 'Rabu',
+    'Thursday': 'Kamis',
+    'Friday': 'Jumat',
+  };
+
   Future<void> _pickTime(BuildContext context, NotificationSchedule schedule) async {
     final picked = await showTimePicker(
       context: context,
@@ -109,9 +117,9 @@ class ScheduleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Color(0xFFE9F2FF),
       appBar: AppBar(
-        title: const Text('Jadwal Absen', style: TextStyle(fontWeight: FontWeight.w600)),
+        title: const Text('Absen Reminder', style: TextStyle(fontWeight: FontWeight.w600)),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 0,
@@ -123,7 +131,7 @@ class ScheduleScreen extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text(
                   'Atur waktu notifikasi absen harian',
@@ -163,7 +171,10 @@ class ScheduleScreen extends StatelessWidget {
                           ),
                           title: Row(
                             children: [
-                              Text(dayData['day'], style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                              Text(
+                                _dayTranslation[dayData['day']] ?? dayData['day'],
+                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                              ),
                               const Spacer(),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -191,6 +202,10 @@ class ScheduleScreen extends StatelessWidget {
                       );
                     },
                   ),
+                ),
+                const Text(
+                  'Copyright © 2025 by Stenly Andika',
+                  style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.w500),
                 ),
               ],
             ),

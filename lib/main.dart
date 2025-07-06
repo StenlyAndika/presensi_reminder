@@ -23,6 +23,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: ScheduleScreen());
+    return MaterialApp(
+      home: ScheduleScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        platform: TargetPlatform.iOS,
+        fontFamily: 'Titilium Web SemiBold',
+        colorSchemeSeed: Colors.indigo,
+      ),
+    );
   }
 }
