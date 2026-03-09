@@ -193,7 +193,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                           ],
                         ),
                         child: ListTile(
-                          contentPadding: const EdgeInsets.all(20),
+                          contentPadding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
                           leading: Container(
                             width: 48,
                             height: 48,
