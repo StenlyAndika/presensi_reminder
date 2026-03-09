@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import '../models/notification_schedule.dart';
 import '../services/notification_service.dart';
+import '../services/schedule_storage_service.dart';
 
-class ScheduleScreen extends StatelessWidget {
-  ScheduleScreen({super.key});
+class ScheduleScreen extends StatefulWidget {
+  const ScheduleScreen({super.key});
+
+  @override
+  State<ScheduleScreen> createState() => _ScheduleScreenState();
+}
+
+class _ScheduleScreenState extends State<ScheduleScreen> {
+  final _storage = ScheduleStorageService.instance;
+  bool _isLoading = true;
 
   final List<Map<String, dynamic>> _dayData = [
     {
@@ -42,6 +50,13 @@ class ScheduleScreen extends StatelessWidget {
       'icon': Icons.celebration_outlined,
       'color': Colors.teal,
     },
+    {
+      'day': 'Saturday',
+      'title': 'Waktunya isi ERK',
+      'message': 'Jangan lupa isi erk bos!',
+      'icon': Icons.date_range,
+      'color': Colors.lightBlue,
+    },
   ];
 
   final Map<String, String> _dayTranslation = {
@@ -50,7 +65,40 @@ class ScheduleScreen extends StatelessWidget {
     'Wednesday': 'Rabu',
     'Thursday': 'Kamis',
     'Friday': 'Jumat',
+    'Saturday': 'Sabtu E-RK',
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeSchedules();
+  }
+
+  Future<void> _initializeSchedules() async {
+    await _storage.init();
+
+    for (final dayData in _dayData) {
+      final day = dayData['day'] as String;
+      if (_storage.getByDay(day) != null) continue;
+
+      final defaultSchedule = NotificationSchedule(
+        day: day,
+        hour: day == 'Friday' ? 7 : 7,
+        minute: day == 'Friday' ? 11 : 26,
+        title: dayData['title'] as String,
+        body: dayData['message'] as String,
+      );
+
+      await _storage.upsertSchedule(defaultSchedule);
+      await NotificationService().scheduleWeekly(defaultSchedule);
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   Future<void> _pickTime(BuildContext context, NotificationSchedule schedule) async {
     final picked = await showTimePicker(
@@ -76,38 +124,17 @@ class ScheduleScreen extends StatelessWidget {
         day: schedule.day,
         hour: picked.hour,
         minute: picked.minute,
-        title: dayData['title'],
-        body: dayData['message'],
+        title: dayData['title'] as String,
+        body: dayData['message'] as String,
       );
 
-      final box = Hive.box<NotificationSchedule>('schedules');
-      final index = box.values.toList().indexWhere((s) => s.day == schedule.day);
-
-      if (index != -1) {
-        await box.putAt(index, updated);
-      }
-
-      NotificationService().scheduleWeekly(updated);
+      await _storage.upsertSchedule(updated);
+      await NotificationService().scheduleWeekly(updated);
     }
   }
 
-  NotificationSchedule _getSchedule(Box<NotificationSchedule> box, String day) {
-    return box.values.firstWhere(
-      (s) => s.day == day,
-      orElse: () {
-        final dayData = _dayData.firstWhere((d) => d['day'] == day);
-        final defaultSchedule = NotificationSchedule(
-          day: day,
-          hour: day == 'Friday' ? 7 : 7,
-          minute: day == 'Friday' ? 11 : 26,
-          title: dayData['title'],
-          body: dayData['message'],
-        );
-        box.add(defaultSchedule);
-        NotificationService().scheduleWeekly(defaultSchedule);
-        return defaultSchedule;
-      },
-    );
+  NotificationSchedule _getSchedule(List<NotificationSchedule> schedules, String day) {
+    return schedules.firstWhere((item) => item.day == day);
   }
 
   String _formatTime(int hour, int minute) {
@@ -116,6 +143,13 @@ class ScheduleScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: Color(0xFFE9F2FF),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Color(0xFFE9F2FF),
       appBar: AppBar(
@@ -125,9 +159,9 @@ class ScheduleScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
       ),
-      body: ValueListenableBuilder<Box<NotificationSchedule>>(
-        valueListenable: Hive.box<NotificationSchedule>('schedules').listenable(),
-        builder: (context, box, _) {
+      body: ValueListenableBuilder<List<NotificationSchedule>>(
+        valueListenable: _storage.listenable,
+        builder: (context, schedules, _) {
           return Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -143,7 +177,7 @@ class ScheduleScreen extends StatelessWidget {
                     itemCount: _dayData.length,
                     itemBuilder: (context, index) {
                       final dayData = _dayData[index];
-                      final schedule = _getSchedule(box, dayData['day']);
+                      final schedule = _getSchedule(schedules, dayData['day'] as String);
 
                       return Container(
                         margin: const EdgeInsets.only(bottom: 12),

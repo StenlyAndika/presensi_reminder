@@ -1,22 +1,8 @@
-import 'package:hive/hive.dart';
-
-part 'notification_schedule.g.dart';
-
-@HiveType(typeId: 0)
-class NotificationSchedule extends HiveObject {
-  @HiveField(0)
+class NotificationSchedule {
   String day;
-
-  @HiveField(1)
   int hour;
-
-  @HiveField(2)
   int minute;
-
-  @HiveField(3)
   String title;
-
-  @HiveField(4)
   String body;
 
   NotificationSchedule({
@@ -26,4 +12,24 @@ class NotificationSchedule extends HiveObject {
     required this.title,
     required this.body,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'day': day,
+      'hour': hour,
+      'minute': minute,
+      'title': title,
+      'body': body,
+    };
+  }
+
+  factory NotificationSchedule.fromJson(Map<String, dynamic> json) {
+    return NotificationSchedule(
+      day: json['day'] as String,
+      hour: json['hour'] as int,
+      minute: json['minute'] as int,
+      title: json['title'] as String,
+      body: json['body'] as String,
+    );
+  }
 }

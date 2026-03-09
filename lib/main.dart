@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 import 'services/notification_service.dart';
-import 'models/notification_schedule.dart';
+import 'services/schedule_storage_service.dart';
 import 'screens/schedule_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Hive.initFlutter();
-  Hive.registerAdapter(NotificationScheduleAdapter());
-
-  await Hive.openBox<NotificationSchedule>('schedules');
-
+  await ScheduleStorageService.instance.init();
   await NotificationService().init();
 
   runApp(const MainApp());

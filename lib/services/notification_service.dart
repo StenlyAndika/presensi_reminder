@@ -47,34 +47,34 @@ class NotificationService {
     );
   }
 
-  Future<void> scheduleDaily({
-    required int hour,
-    required int minute,
-    int id = 1,
-    String title = 'Waktunya Absen Pagi',
-    String body = 'Jangan Lupa Absen Icik Bos :D',
-  }) async {
-    await _notifications.cancelAll(); // Clear existing scheduled notifications
+  // Future<void> scheduleDaily({
+  //   required int hour,
+  //   required int minute,
+  //   int id = 1,
+  //   String title = 'Waktunya Absen Pagi',
+  //   String body = 'Jangan Lupa Absen Icik Bos :D',
+  // }) async {
+  //   await _notifications.cancelAll(); // Clear existing scheduled notifications
 
-    final now = tz.TZDateTime.now(tz.local);
-    var schedule = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
+  //   final now = tz.TZDateTime.now(tz.local);
+  //   var schedule = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute);
 
-    if (schedule.isBefore(now)) {
-      schedule = schedule.add(const Duration(days: 1));
-    }
+  //   if (schedule.isBefore(now)) {
+  //     schedule = schedule.add(const Duration(days: 1));
+  //   }
 
-    await _notifications.zonedSchedule(
-      id,
-      title,
-      body,
-      schedule,
-      _defaultDetails(),
-      androidScheduleMode: AndroidScheduleMode.alarmClock,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
+  //   await _notifications.zonedSchedule(
+  //     id,
+  //     title,
+  //     body,
+  //     schedule,
+  //     _defaultDetails(),
+  //     androidScheduleMode: AndroidScheduleMode.alarmClock,
+  //     matchDateTimeComponents: DateTimeComponents.time,
+  //   );
 
-    debugPrint('Daily notification scheduled at: $schedule');
-  }
+  //   debugPrint('Daily notification scheduled at: $schedule');
+  // }
 
   Future<void> scheduleWeekly(NotificationSchedule schedule) async {
     final dateTime = _nextDayTime(schedule.day, schedule.hour, schedule.minute);
@@ -100,6 +100,7 @@ class NotificationService {
       'Wednesday': DateTime.wednesday,
       'Thursday': DateTime.thursday,
       'Friday': DateTime.friday,
+      'Saturday': DateTime.saturday
     };
 
     final targetWeekday = weekdays[day]!;
